@@ -1,443 +1,418 @@
-const $ = (s, r=document) => r.querySelector(s);
-const $$ = (s, r=document) => [...r.querySelectorAll(s)];
-const money = n => "Rp " + Number(n || 0).toLocaleString("id-ID");
-const esc = s => String(s ?? "").replace(/[&<>"']/g,m=>({
-  "&":"&amp;",
-  "<":"&lt;",
-  ">":"&gt;",
-  '"':"&quot;",
-  "'":"&#039;"
-}[m]));
+/* =========================================================
+   KAELZONLINE APP.JS
+   Versi bersih
+   ========================================================= */
+
+const $ = (s, r = document) => r.querySelector(s);
+const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+
+const money = n =>
+  "Rp " + Number(n || 0).toLocaleString("id-ID");
+
+const esc = s =>
+  String(s ?? "").replace(/[&<>"']/g, m => ({
+    "&":"&amp;",
+    "<":"&lt;",
+    ">":"&gt;",
+    '"':"&quot;",
+    "'":"&#039;"
+  }[m]));
+
+/* =========================================================
+   CATALOG
+   ========================================================= */
 
 const catalog = [
-  ["game","FREE FIRE","50 DIAMOND",8000,"💎",1],
-  ["game","FREE FIRE","140 DIAMOND",18000,"💎",2],
-  ["game","FREE FIRE","210 DIAMOND",27000,"💎",3],
-  ["game","FREE FIRE","355 DIAMOND",44000,"💎",4],
-  ["game","FREE FIRE","500 DIAMOND",61000,"💎",5],
-  ["game","FREE FIRE","720 DIAMOND",85000,"💎",6],
-  ["game","FREE FIRE","1450 DIAMOND",170000,"💎",7],
 
-  ["game","MOBILE LEGENDS","56 DIAMOND",17000,"💎",8],
-  ["game","MOBILE LEGENDS","144 DIAMOND",39000,"💎",9],
-  ["game","MOBILE LEGENDS","240 DIAMOND",65000,"💎",10],
-  ["game","MOBILE LEGENDS","355 DIAMOND",90000,"💎",11],
-  ["game","MOBILE LEGENDS","460 DIAMOND",117000,"💎",12],
-  ["game","MOBILE LEGENDS","712 DIAMOND",179000,"💎",13],
-  ["game","MOBILE LEGENDS","1159 DIAMOND",289000,"💎",14],
+  /* GAME */
+  {
+    id:"ff",
+    category:"game",
+    name:"Free Fire",
+    icon:"🔥",
+    description:"Top Up Diamond Free Fire",
+    products:[
+      {id:"ff5",name:"5 Diamond",price:1000},
+      {id:"ff12",name:"12 Diamond",price:2000},
+      {id:"ff50",name:"50 Diamond",price:7000},
+      {id:"ff70",name:"70 Diamond",price:10000},
+      {id:"ff140",name:"140 Diamond",price:19000},
+      {id:"ff355",name:"355 Diamond",price:47000},
+      {id:"ff720",name:"720 Diamond",price:93000}
+    ]
+  },
 
-  ["game","LAINNYA","LAINNYA DALAM PROSES",0,"🎮",99],
+  {
+    id:"ml",
+    category:"game",
+    name:"Mobile Legends",
+    icon:"🎮",
+    description:"Top Up Diamond Mobile Legends",
+    products:[
+      {id:"ml5",name:"5 Diamond",price:1500},
+      {id:"ml12",name:"12 Diamond",price:3000},
+      {id:"ml28",name:"28 Diamond",price:6000},
+      {id:"ml59",name:"59 Diamond",price:12000},
+      {id:"ml85",name:"85 Diamond",price:17000},
+      {id:"ml170",name:"170 Diamond",price:33000},
+      {id:"ml296",name:"296 Diamond",price:55000},
+      {id:"ml408",name:"408 Diamond",price:75000}
+    ]
+  },
 
-  ["virtual","WHATSAPP","INDONESIA",4000,"🇮🇩",1],
-  ["virtual","WHATSAPP","COLOMBIA",6000,"🇨🇴",2],
-  ["virtual","WHATSAPP","MALAYSIA",10000,"🇲🇾",3],
-  ["virtual","WHATSAPP","PHILIPINA",7000,"🇵🇭",4],
+  /* VIRTUAL NUMBER */
+  {
+    id:"wa",
+    category:"virtual",
+    name:"Nomor Virtual WhatsApp",
+    icon:"📱",
+    description:"Nomor virtual untuk WhatsApp",
+    products:[
+      {id:"wa1",name:"Nomor WhatsApp 1x",price:10000},
+      {id:"wa7",name:"Nomor WhatsApp Premium",price:25000}
+    ]
+  },
 
-  ["virtual","SHOPEE","INDONESIA",3000,"🇮🇩",5],
-  ["virtual","SHOPEE","PHILIPINA",4000,"🇵🇭",6],
-  ["virtual","SHOPEE","MALAYSIA",5000,"🇲🇾",7],
+  {
+    id:"shopee",
+    category:"virtual",
+    name:"Nomor Virtual Shopee",
+    icon:"🛒",
+    description:"Nomor virtual untuk Shopee",
+    products:[
+      {id:"shopee1",name:"Nomor Shopee",price:12000}
+    ]
+  },
 
-  ["logo","JASA LOGO","LOGO JB",1000,"🎨",1],
-  ["logo","JASA LOGO","LOGO FT",3000,"🖼️",2],
-  ["logo","JASA LOGO","LOGO ANIME",2000,"🌌",3],
-  ["logo","JASA LOGO","LOGO CHIBI",2000,"✨",4],
-  ["logo","JASA LOGO","LOGO QRIS",3000,"▣",5],
-  ["logo","JASA LOGO","LOGO MUKA",5000,"👤",6],
-  ["logo","JASA LOGO","LOGO TESTIMONI",3000,"💬",7],
-  ["logo","JASA LOGO","LOGO WALPAPER",1000,"📱",8],
-  ["logo","JASA LOGO","LOGO INFO SELL",5000,"🛍️",9]
+  /* LOGO */
+  {
+    id:"logo",
+    category:"logo",
+    name:"Jasa Pembuatan Logo",
+    icon:"🎨",
+    description:"Buat logo sesuai request",
+    products:[
+      {
+        id:"logo-basic",
+        name:"Logo Basic",
+        price:25000
+      },
+      {
+        id:"logo-premium",
+        name:"Logo Premium",
+        price:50000
+      }
+    ]
+  }
+
 ];
 
-function localProducts(category){
-  return catalog
-    .filter(x=>x[0]===category)
-    .map((x,i)=>({
-      id:"local-"+category+"-"+i,
-      category:x[0],
-      subcategory:x[1],
-      name:x[2],
-      price:x[3],
-      icon:x[4],
-      active:true,
-      sort_order:x[5]
-    }));
-}
+/* =========================================================
+   PRODUCT HELPERS
+   ========================================================= */
 
-async function dbProducts(category){
-  if(!window.supabaseClient) return localProducts(category);
-
-  try{
-    const {
-      data,
-      error
-    } = await window.supabaseClient
-      .from("products")
-      .select("*")
-      .eq("category",category)
-      .eq("active",true)
-      .order("sort_order");
-
-    if(error || !data?.length){
-      return localProducts(category);
-    }
-
-    return data;
-  }catch(e){
-    console.warn(e);
-    return localProducts(category);
-  }
-}
-
-function card(p){
-  return `
-    <article class="product">
-      <div class="product-top">
-        <div class="game-art">${esc(p.icon||"🎮")}</div>
-        <div>
-          <h3>${esc(p.name)}</h3>
-          <small>${esc(p.subcategory||"Digital Service")}</small>
-        </div>
-      </div>
-
-      <div class="row">
-        <b class="price">${money(p.price)}</b>
-        <button class="cta small choose" data-id="${esc(p.id)}">
-          Pilih
-        </button>
-      </div>
-    </article>
-  `;
-}
-
-function saveProduct(p){
-  localStorage.setItem("ko_cart",JSON.stringify(p));
-  location.href="checkout.html";
-}
-
-async function productPage(category){
-  const target=$("#products");
-  if(!target) return;
-
-  const tabs=$$(".tab");
-  const search=$("#search");
-
-  let all=await dbProducts(category);
-  let filter=tabs[0]?.dataset.filter||"ALL";
-
-  const draw=()=>{
-    const q=(search?.value||"").toLowerCase().trim();
-
-    const list=all.filter(p=>
-      (filter==="ALL" ||
-       String(p.subcategory).toUpperCase()===filter) &&
-      (`${p.name} ${p.subcategory}`)
-        .toLowerCase()
-        .includes(q)
-    );
-
-    target.innerHTML=list.length
-      ? list.map(card).join("")
-      : `<div class="empty">Produk tidak ditemukan.</div>`;
-
-    $$(".choose",target).forEach(b=>{
-      b.onclick=()=>{
-        const p=all.find(
-          x=>String(x.id)===String(b.dataset.id)
-        );
-
-        if(p) saveProduct(p);
-      };
-    });
-  };
-
-  tabs.forEach(t=>{
-    t.onclick=()=>{
-      tabs.forEach(x=>x.classList.remove("active"));
-      t.classList.add("active");
-      filter=t.dataset.filter||"ALL";
-      draw();
-    };
-  });
-
-  search?.addEventListener("input",draw);
-
-  draw();
-}
-
-function bindGlobal(){
-  $$(".year").forEach(
-    x=>x.textContent=new Date().getFullYear()
+function getAllProducts(){
+  return catalog.flatMap(c =>
+    c.products.map(p => ({
+      ...p,
+      category:c.category,
+      categoryId:c.id,
+      categoryName:c.name,
+      icon:c.icon
+    }))
   );
 }
 
-function renderHome(){
-  const fav=$("#favorites");
-  if(!fav) return;
-
-  const items=localProducts("game")
-    .filter(p=>[
-      "FREE FIRE",
-      "MOBILE LEGENDS"
-    ].includes(p.subcategory));
-
-  fav.innerHTML=items.map(p=>`
-    <a class="game-card" href="game.html">
-      <div class="game-art">${p.icon}</div>
-      <div>
-        <b>${p.subcategory}</b>
-        <small>Top Up Diamond</small>
-      </div>
-      <span class="arrow">›</span>
-    </a>
-  `).join("");
+function findProduct(id){
+  return getAllProducts().find(p => p.id === id);
 }
+
+function getCategory(id){
+  return catalog.find(c => c.id === id);
+}
+
+/* =========================================================
+   LOCAL PRODUCT SUPPORT
+   ========================================================= */
+
+function getLocalProducts(){
+  try{
+    return JSON.parse(localStorage.getItem("ko_products") || "[]");
+  }catch{
+    return [];
+  }
+}
+
+function saveProduct(product){
+  const list = getLocalProducts();
+  const index = list.findIndex(x => x.id === product.id);
+
+  if(index >= 0) list[index] = product;
+  else list.push(product);
+
+  localStorage.setItem("ko_products", JSON.stringify(list));
+}
+
+function getProducts(){
+  return [
+    ...getAllProducts(),
+    ...getLocalProducts()
+  ];
+}
+
+/* =========================================================
+   CART
+   ========================================================= */
+
+function getCart(){
+  try{
+    return JSON.parse(localStorage.getItem("ko_cart") || "null");
+  }catch{
+    return null;
+  }
+}
+
+function setCart(product){
+  localStorage.setItem("ko_cart", JSON.stringify(product));
+}
+
+function clearCart(){
+  localStorage.removeItem("ko_cart");
+}
+
+/* =========================================================
+   INDEXED DB
+   ========================================================= */
 
 function idbOpen(){
   return new Promise((resolve,reject)=>{
-    const r=indexedDB.open("kaelzUploads",1);
+    const request = indexedDB.open("KaelzOnlineDB",1);
 
-    r.onupgradeneeded=()=>{
-      if(!r.result.objectStoreNames.contains("pending")){
-        r.result.createObjectStore("pending");
+    request.onupgradeneeded = e =>{
+      const db = e.target.result;
+
+      if(!db.objectStoreNames.contains("files")){
+        db.createObjectStore("files");
       }
     };
 
-    r.onsuccess=()=>resolve(r.result);
-    r.onerror=()=>reject(r.error);
+    request.onsuccess = () => resolve(request.result);
+    request.onerror = () => reject(request.error);
   });
 }
 
 async function idbSet(key,value){
-  const db=await idbOpen();
+  const db = await idbOpen();
 
   return new Promise((resolve,reject)=>{
-    const tx=db.transaction("pending","readwrite");
+    const tx = db.transaction("files","readwrite");
+    tx.objectStore("files").put(value,key);
 
-    tx.objectStore("pending").put(value,key);
-
-    tx.oncomplete=()=>resolve();
-    tx.onerror=()=>reject(tx.error);
+    tx.oncomplete = resolve;
+    tx.onerror = () => reject(tx.error);
   });
 }
 
 async function idbGet(key){
-  const db=await idbOpen();
+  const db = await idbOpen();
 
   return new Promise((resolve,reject)=>{
-    const tx=db.transaction("pending","readonly");
-    const r=tx.objectStore("pending").get(key);
+    const tx = db.transaction("files","readonly");
+    const req = tx.objectStore("files").get(key);
 
-    r.onsuccess=()=>resolve(r.result||null);
-    r.onerror=()=>reject(r.error);
+    req.onsuccess = () => resolve(req.result);
+    req.onerror = () => reject(req.error);
   });
 }
 
 async function idbDelete(key){
-  const db=await idbOpen();
+  const db = await idbOpen();
 
   return new Promise((resolve,reject)=>{
-    const tx=db.transaction("pending","readwrite");
+    const tx = db.transaction("files","readwrite");
+    tx.objectStore("files").delete(key);
 
-    tx.objectStore("pending").delete(key);
-
-    tx.oncomplete=()=>resolve();
-    tx.onerror=()=>reject(tx.error);
+    tx.oncomplete = resolve;
+    tx.onerror = () => reject(tx.error);
   });
 }
 
-function logoGallery(){
-  const open=$("#logoGalleryOpen");
-  if(!open)return;
+/* =========================================================
+   GLOBAL BUTTONS
+   ========================================================= */
 
-  open.onclick=()=>{
-    const w=document.createElement("div");
-    w.className="gallery-modal";
+function bindGlobal(){
 
-    w.innerHTML=`
-      <div class="gallery-modal-backdrop"></div>
-      <div class="gallery-modal-card logo-zoom-card">
-        <button class="gallery-close" type="button">×</button>
-        <div class="zoom-hint">
-          Cubit/zoom gambar untuk melihat detail logo
-        </div>
-        <img
-          src="logo-gallery.jpg"
-          alt="Katalog contoh logo diperbesar"
-        >
-        <p>
-          Pilih referensi yang kamu suka dari katalog.
-          <b>
-            Zoom logo → screenshot bagian logo → upload screenshot
-            di menu referensi.
-          </b>
-        </p>
+  $$("[data-product]").forEach(btn=>{
+    btn.addEventListener("click",()=>{
+      const product = findProduct(btn.dataset.product);
+
+      if(!product) return;
+
+      setCart(product);
+      location.href = "checkout.html";
+    });
+  });
+
+  $$("[data-buy]").forEach(btn=>{
+    btn.addEventListener("click",()=>{
+      const product = findProduct(btn.dataset.buy);
+
+      if(!product) return;
+
+      setCart(product);
+      location.href = "checkout.html";
+    });
+  });
+
+}
+
+/* =========================================================
+   HOME
+   ========================================================= */
+
+function renderHome(){
+
+  const target = $("#homeProducts");
+
+  if(!target) return;
+
+  const products = getProducts();
+
+  target.innerHTML = products.map(p=>`
+    <div class="product-card">
+
+      <div class="product-icon">
+        ${esc(p.icon || "🛍️")}
       </div>
-    `;
 
-    document.body.appendChild(w);
+      <div class="product-info">
+        <h3>${esc(p.name)}</h3>
 
-    w.querySelector(".gallery-close").onclick=()=>w.remove();
-    w.querySelector(".gallery-modal-backdrop").onclick=()=>w.remove();
-  };
+        <p>${money(p.price)}</p>
+
+        <button
+          class="btn"
+          data-buy="${esc(p.id)}">
+          Beli
+        </button>
+      </div>
+
+    </div>
+  `).join("");
+
+  bindGlobal();
 }
 
-async function logoReferenceFlow(){
-  const chooser=$("#logoProductChooser");
-  const panel=$("#logoReferencePanel");
-  const input=$("#logoReferenceFile");
-  const preview=$("#logoReferencePreview");
-  const status=$("#logoReferenceStatus");
-  const cont=$("#continueLogoCheckout");
+/* =========================================================
+   PRODUCT PAGE
+   ========================================================= */
 
-  if(!chooser || !panel)return;
+function productPage(page){
 
-  let products=await dbProducts("logo");
+  const category =
+    getCategory(page) ||
+    catalog.find(c => c.category === page);
 
-  const draw=()=>{
-    chooser.innerHTML=products.map(p=>`
-      <article
-        class="product logo-choice"
-        data-id="${esc(p.id)}"
-      >
-        <div class="product-top">
-          <div class="game-art">
-            ${esc(p.icon||"🎨")}
-          </div>
+  if(!category) return;
 
-          <div>
-            <h3>${esc(p.name)}</h3>
-            <small>
-              ${esc(p.subcategory||"JASA LOGO")}
-            </small>
-          </div>
-        </div>
+  const target =
+    $("#products") ||
+    $("#productList") ||
+    $("#gameProducts") ||
+    $("#virtualProducts");
 
-        <div class="row">
-          <b class="price">${money(p.price)}</b>
+  if(!target) return;
 
-          <button
-            class="cta small"
-            data-logo-id="${esc(p.id)}"
-          >
-            Pilih Logo
-          </button>
-        </div>
-      </article>
-    `).join("");
+  target.innerHTML = category.products.map(p=>`
 
-    chooser
-      .querySelectorAll("[data-logo-id]")
-      .forEach(b=>{
-        b.onclick=async()=>{
-          const p=products.find(
-            x=>String(x.id)===String(b.dataset.logoId)
-          );
+    <div class="product-card">
 
-          if(!p)return;
+      <div class="product-icon">
+        ${esc(category.icon)}
+      </div>
 
-          localStorage.setItem(
-            "ko_cart",
-            JSON.stringify(p)
-          );
+      <div class="product-info">
 
-          panel.hidden=false;
+        <h3>${esc(p.name)}</h3>
 
-          status.textContent=
-            "Belum ada screenshot referensi.";
+        <strong>${money(p.price)}</strong>
 
-          preview.innerHTML="";
-          cont.disabled=true;
+        <button
+          class="btn"
+          data-buy="${esc(p.id)}">
+          Beli Sekarang
+        </button>
 
-          window.scrollTo({
-            top:panel.offsetTop-16,
-            behavior:"smooth"
-          });
-        };
-      });
-  };
+      </div>
 
-  draw();
+    </div>
 
-  input?.addEventListener("change",async e=>{
-    const f=e.target.files?.[0];
+  `).join("");
 
-    if(!f)return;
+  bindGlobal();
+}
 
-    if(!/^image\/(jpeg|png|webp)$/.test(f.type)){
-      alert(
-        "Referensi harus JPG, PNG, atau WEBP."
-      );
+/* =========================================================
+   LOGO REFERENCE
+   ========================================================= */
 
-      input.value="";
+async function logoGallery(){
+
+  const input =
+    $("#logo_reference") ||
+    $("#logoReference") ||
+    $("#reference");
+
+  if(!input) return;
+
+  input.addEventListener("change", async ()=>{
+
+    const file = input.files?.[0];
+
+    if(!file) return;
+
+    if(file.size > 10 * 1024 * 1024){
+      alert("Ukuran gambar maksimal 10 MB.");
+      input.value = "";
       return;
     }
 
-    if(f.size>5*1024*1024){
-      alert(
-        "Screenshot maksimal 5 MB."
-      );
+    await idbSet("logoReference",file);
 
-      input.value="";
-      return;
+    const preview =
+      $("#logoPreview") ||
+      $("#referencePreview");
+
+    if(preview){
+      preview.src = URL.createObjectURL(file);
+      preview.style.display = "block";
     }
 
-    try{
-      await idbSet("logoReference",f);
-
-      status.textContent=
-        `Referensi siap: ${f.name}`;
-
-      preview.innerHTML="";
-
-      const img=document.createElement("img");
-
-      img.src=URL.createObjectURL(f);
-      img.alt="Preview screenshot referensi";
-
-      preview.appendChild(img);
-
-      cont.disabled=false;
-
-    }catch(err){
-      alert(
-        "Referensi gagal disimpan: "+
-        err.message
-      );
-    }
   });
 
-  cont?.addEventListener("click",()=>{
-    if(!localStorage.getItem("ko_cart")){
-      return alert(
-        "Pilih produk logo terlebih dahulu."
-      );
-    }
-
-    location.href="checkout.html";
-  });
 }
 
-
-/* =========================
+/* =========================================================
    CHECKOUT
-========================= */
+   ========================================================= */
 
 async function checkout(){
-  const cart=JSON.parse(
-    localStorage.getItem("ko_cart")||"null"
-  );
 
-  const box=$("#checkout");
+  const target = $("#checkout");
 
-  if(!box)return;
+  if(!target) return;
+
+  const cart = getCart();
 
   if(!cart){
-    box.innerHTML=`
+
+    target.innerHTML = `
       <div class="empty">
-        Belum ada produk dipilih.
+        Keranjang kosong.
         <br><br>
-        <a class="cta" href="game.html">
-          Pilih Produk
+        <a href="game.html" class="btn">
+          Kembali Belanja
         </a>
       </div>
     `;
@@ -445,309 +420,241 @@ async function checkout(){
     return;
   }
 
-  const isGame=
-    cart.category==="game";
+  const isGame =
+    cart.category === "game";
 
-  const isML=
-    String(cart.subcategory).toUpperCase()==="MOBILE LEGENDS";
+  const isML =
+    cart.id?.startsWith("ml");
 
-  const isVirtual=
-    cart.category==="virtual";
+  const isVirtual =
+    cart.category === "virtual";
 
-  const isLogo=
-    cart.category==="logo";
+  const isLogo =
+    cart.category === "logo";
 
-  let fields="";
+  target.innerHTML = `
 
-  if(isGame){
-    fields=`
-      <div class="field">
-        <label>ID Game *</label>
-        <input
-          name="game_id"
-          required
-          placeholder="Masukkan ID game"
-        >
+    <div class="checkout-card">
+
+      <h2>${esc(cart.name)}</h2>
+
+      <div class="checkout-price">
+        ${money(cart.price)}
       </div>
 
-      ${
-        isML
-        ? `
-          <div class="field">
-            <label>Server *</label>
+      <form id="checkoutForm">
+
+        <label>Nama</label>
+
+        <input
+          name="name"
+          type="text"
+          placeholder="Nama kamu"
+          required
+        >
+
+        ${
+          isGame
+          ? `
+            <label>ID Game</label>
+
+            <input
+              name="game_id"
+              type="text"
+              placeholder="Masukkan ID Game"
+              required
+            >
+          `
+          : ""
+        }
+
+        ${
+          isML
+          ? `
+            <label>Server</label>
+
             <input
               name="server"
-              required
-              inputmode="numeric"
-              placeholder="Masukkan server Mobile Legends"
-            >
-          </div>
-        `
-        : ""
-      }
-    `;
-  }
-
-  if(isVirtual){
-    fields=`
-      <div class="field">
-        <label>Nomor WhatsApp *</label>
-        <input
-          name="wa"
-          required
-          inputmode="tel"
-          placeholder="08xxxxxxxxxx"
-        >
-      </div>
-
-      <div class="notice">
-        Nomor WhatsApp dipakai untuk pengiriman OTP
-        saat nomor virtual sudah aktif.
-      </div>
-    `;
-  }
-
-  let logoRef=null;
-
-  if(isLogo){
-    logoRef=await idbGet("logoReference");
-
-    if(!logoRef){
-      box.innerHTML=`
-        <div class="empty">
-          Referensi logo belum dipilih.
-          <br><br>
-          <a class="cta" href="logo.html">
-            Pilih Referensi Logo Dulu
-          </a>
-        </div>
-      `;
-
-      return;
-    }
-
-    fields=`
-      <div class="logo-reference-confirm">
-        <div class="section-title">
-          <h3>Referensi Logo</h3>
-          <a class="text-link" href="logo.html">
-            Ganti
-          </a>
-        </div>
-
-        <div class="upload-preview">
-          <img
-            src="${URL.createObjectURL(logoRef)}"
-            alt="Referensi logo"
-          >
-        </div>
-
-        <small class="muted">
-          Referensi sudah dipilih sebelum pembayaran.
-          Pastikan screenshot memperlihatkan logo
-          yang kamu inginkan.
-        </small>
-      </div>
-
-      <div class="field">
-        <label>REQUEST NAMA *</label>
-        <input
-          name="logo_name"
-          required
-          placeholder="Nama yang ingin dibuat"
-        >
-      </div>
-
-      <div class="field">
-        <label>DESKRIPSI LAINNYA *</label>
-        <textarea
-          name="logo_description"
-          required
-          placeholder="Jelaskan logo yang kamu inginkan"
-        ></textarea>
-      </div>
-    `;
-  }
-
-  box.innerHTML=`
-    <div class="checkout-grid">
-
-      <section class="panel">
-        <h2 style="margin-top:0">
-          Detail Pesanan
-        </h2>
-
-        <div
-          class="product"
-          style="margin-bottom:14px"
-        >
-          <div class="row">
-            <div>
-              <b>${esc(cart.name)}</b>
-              <div class="muted">
-                ${esc(cart.subcategory)}
-              </div>
-            </div>
-
-            <b class="price">
-              ${money(cart.price)}
-            </b>
-          </div>
-        </div>
-
-        <form id="orderForm" class="form">
-
-          ${fields}
-
-          <div class="field">
-            <label>Metode Pembayaran *</label>
-
-            <select
-              name="payment"
-              id="payment"
+              type="text"
+              placeholder="Contoh: 1234"
               required
             >
-              <option value="">
-                Pilih pembayaran
-              </option>
-              <option>QRIS</option>
-              <option>DANA</option>
-              <option>OVO</option>
-              <option>GoPay</option>
-              <option>Transfer Bank</option>
-            </select>
-          </div>
+          `
+          : ""
+        }
 
-          <div
-            id="qrisBox"
-            class="panel qris"
-            style="display:none"
-          >
-            <b>Scan QRIS untuk Pembayaran</b>
-
-            <img
-              src="qris.jpg"
-              alt="QRIS"
-            >
-
-            <small class="muted">
-              Setelah membayar,
-              upload bukti transfer asli.
-            </small>
-          </div>
-
-          <div class="field">
-            <label>
-              Upload Bukti Transfer *
-            </label>
+        ${
+          isVirtual
+          ? `
+            <label>Nomor WhatsApp</label>
 
             <input
-              name="proof"
-              id="proof"
-              type="file"
-              accept="image/jpeg,image/png,image/webp,application/pdf"
+              name="wa"
+              type="text"
+              placeholder="08xxxxxxxxxx"
               required
-              capture="environment"
+            >
+          `
+          : ""
+        }
+
+        ${
+          isLogo
+          ? `
+            <label>Nama Logo / Brand</label>
+
+            <input
+              name="logo_name"
+              type="text"
+              placeholder="Nama brand"
+              required
             >
 
-            <small class="muted">
-              JPG, PNG, WEBP, PDF —
-              maksimal 5 MB.
-              File disimpan apa adanya.
-            </small>
-          </div>
+            <label>Deskripsi Logo</label>
 
-          <button
-            class="cta"
-            id="submitOrder"
-            type="submit"
-          >
-            Bayar & Buat Pesanan →
-          </button>
+            <textarea
+              name="logo_description"
+              placeholder="Jelaskan logo yang kamu inginkan"
+              required
+            ></textarea>
 
-        </form>
-      </section>
+            <label>Referensi Logo</label>
 
-      <aside class="panel">
-        <h3>Ringkasan</h3>
+            <input
+              id="logo_reference"
+              name="logo_reference"
+              type="file"
+              accept="image/*"
+            >
 
-        <div class="order-row">
-          <span>Produk</span>
-          <b>${esc(cart.name)}</b>
-        </div>
+            <img
+              id="logoPreview"
+              style="
+                display:none;
+                max-width:100%;
+                margin-top:10px;
+                border-radius:10px;
+              "
+            >
+          `
+          : ""
+        }
 
-        <div class="order-row">
-          <span>Total</span>
-          <b class="price">
-            ${money(cart.price)}
-          </b>
-        </div>
+        <label>Metode Pembayaran</label>
 
-        <div class="notice">
-          ${
-            isLogo
-            ? "Referensi logo sudah dipilih. Setelah ini lakukan pembayaran lalu upload bukti transfer."
-            : "Setelah pembayaran, pesanan masuk ke admin untuk diverifikasi."
-          }
-        </div>
-      </aside>
+        <select name="payment" required>
+
+          <option value="">
+            Pilih pembayaran
+          </option>
+
+          <option value="QRIS">
+            QRIS
+          </option>
+
+          <option value="DANA">
+            DANA
+          </option>
+
+          <option value="OVO">
+            OVO
+          </option>
+
+          <option value="GoPay">
+            GoPay
+          </option>
+
+          <option value="Transfer Bank">
+            Transfer Bank
+          </option>
+
+        </select>
+
+        <label>Bukti Transfer</label>
+
+        <input
+          name="proof"
+          type="file"
+          accept="image/*"
+          required
+        >
+
+        <button
+          type="submit"
+          class="btn"
+          id="submitOrder">
+
+          Pesan Sekarang
+
+        </button>
+
+        <div id="checkoutStatus"></div>
+
+      </form>
 
     </div>
+
   `;
 
-  $("#payment").onchange=e=>{
-    $("#qrisBox").style.display=
-      e.target.value==="QRIS"
-      ? "block"
-      : "none";
-  };
+  logoGallery();
 
-  $("#orderForm").onsubmit=async e=>{
+  const form = $("#checkoutForm");
+  const status = $("#checkoutStatus");
+  const submit = $("#submitOrder");
+
+  form.addEventListener("submit", async e =>{
+
     e.preventDefault();
 
-    const btn=$("#submitOrder");
-    const f=new FormData(e.target);
-    const proof=f.get("proof");
+    if(!window.supabaseClient){
 
-    if(!proof?.size){
-      alert("Bukti transfer wajib diupload.");
+      status.innerHTML =
+        `<p>Supabase belum terhubung.</p>`;
+
       return;
     }
 
-    if(proof.size>5*1024*1024){
-      alert("Ukuran bukti maksimal 5 MB.");
-      return;
-    }
+    submit.disabled = true;
 
-    btn.disabled=true;
-    btn.textContent="Mengirim...";
-
-    let proofPath=null;
-    let referencePath=null;
+    status.innerHTML =
+      `<p>Mengupload data...</p>`;
 
     try{
-      if(!window.supabaseClient){
-        throw new Error(
-          "Supabase belum terhubung."
-        );
+
+      const f = new FormData(form);
+
+      const proof =
+        f.get("proof");
+
+      if(!proof || proof.size === 0){
+        throw new Error("Bukti transfer wajib diupload.");
       }
 
-      const code=
-        "KO-"+
-        Date.now()
+      /* -----------------------------------------
+         ORDER CODE
+         ----------------------------------------- */
+
+      const code =
+        "KO-" +
+        Date.now().toString(36).toUpperCase() +
+        Math.random()
           .toString(36)
+          .slice(2,6)
           .toUpperCase();
 
-      const safe=proof.name.replace(
-        /[^a-zA-Z0-9._-]/g,
-        "_"
-      );
+      /* -----------------------------------------
+         PAYMENT PROOF
+         ----------------------------------------- */
 
-      proofPath=
-        `${code}/${crypto.randomUUID()}-${safe}`;
+      let proofPath = null;
 
-      /* Upload bukti pembayaran */
-      let up=
+      const proofExt =
+        proof.name.split(".").pop() || "jpg";
+
+      proofPath =
+        `${code}/payment.${proofExt}`;
+
+      const uploadProof =
         await window.supabaseClient
           .storage
           .from("payment-proofs")
@@ -755,101 +662,122 @@ async function checkout(){
             proofPath,
             proof,
             {
-              contentType:proof.type,
-              upsert:false
+              upsert:true,
+              contentType:proof.type
             }
           );
 
-      if(up.error){
-        throw up.error;
+      if(uploadProof.error){
+        throw new Error(
+          "Upload bukti transfer gagal: " +
+          uploadProof.error.message
+        );
       }
 
-      /* Upload referensi logo jika produk logo */
+      /* -----------------------------------------
+         LOGO REFERENCE
+         ----------------------------------------- */
+
+      let referencePath = null;
+
       if(isLogo){
-        const safeRef=
-          logoRef.name.replace(
-            /[^a-zA-Z0-9._-]/g,
-            "_"
-          );
 
-        referencePath=
-          `${code}/${crypto.randomUUID()}-${safeRef}`;
+        const reference =
+          await idbGet("logoReference");
 
-        up=
-          await window.supabaseClient
-            .storage
-            .from("logo-references")
-            .upload(
-              referencePath,
-              logoRef,
-              {
-                contentType:logoRef.type,
-                upsert:false
-              }
+        if(reference){
+
+          const ext =
+            reference.name?.split(".").pop() || "jpg";
+
+          referencePath =
+            `${code}/reference.${ext}`;
+
+          const uploadReference =
+            await window.supabaseClient
+              .storage
+              .from("logo-references")
+              .upload(
+                referencePath,
+                reference,
+                {
+                  upsert:true,
+                  contentType:
+                    reference.type ||
+                    "image/jpeg"
+                }
+              );
+
+          if(uploadReference.error){
+
+            throw new Error(
+              "Upload referensi logo gagal: " +
+              uploadReference.error.message
             );
 
-        if(up.error){
-          await window.supabaseClient
-            .storage
-            .from("payment-proofs")
-            .remove([proofPath]);
+          }
 
-          proofPath=null;
-
-          throw up.error;
         }
+
       }
 
-      /* Detail pesanan */
-      let detail="";
+      /* -----------------------------------------
+         DETAIL
+         ----------------------------------------- */
 
-      if(isGame){
-        detail=
-          `ID Game: ${f.get("game_id")}`;
-
-        if(isML){
-          detail+=
-            ` | Server: ${f.get("server")}`;
-        }
-      }
-
-      if(isLogo){
-        detail=
-          `REQUEST NAMA: ${f.get("logo_name")} | `+
-          `DESKRIPSI LAINNYA: ${f.get("logo_description")}`;
-      }
-
-      if(isVirtual){
-        detail=
-          "Nomor virtual diproses admin; OTP dikirim setelah nomor aktif.";
-      }
-
-      /*
-       * PENTING:
-       * Jangan gunakan .select().single()
-       * setelah INSERT.
-       *
-       * Karena user anonim tidak memiliki
-       * izin SELECT pada tabel orders.
-       */
-      const orderPayload={
-        order_code:code,
-        product_id:cart.id,
-        product_name:cart.name,
+      const detail = {
 
         buyer_name:
-          isLogo
-          ? f.get("logo_name")
-          : isGame
+          f.get("name") || null,
+
+        game_id:
+          isGame
             ? f.get("game_id")
+            : null,
+
+        game_server:
+          isML
+            ? f.get("server")
             : null,
 
         whatsapp:
           isVirtual
-          ? f.get("wa")
-          : null,
+            ? f.get("wa")
+            : null,
 
-        detail:detail,
+        logo_name:
+          isLogo
+            ? f.get("logo_name")
+            : null,
+
+        logo_description:
+          isLogo
+            ? f.get("logo_description")
+            : null
+
+      };
+
+      /* -----------------------------------------
+         ORDER PAYLOAD
+         ----------------------------------------- */
+
+      const orderPayload = {
+
+        order_code: code,
+
+        product_id: cart.id,
+
+        product_name: cart.name,
+
+        buyer_name:
+          f.get("name") || null,
+
+        whatsapp:
+          isVirtual
+            ? f.get("wa")
+            : null,
+
+        detail: JSON.stringify(detail),
 
         payment_method:
           f.get("payment"),
@@ -871,71 +799,83 @@ async function checkout(){
 
         game_id:
           isGame
-          ? f.get("game_id")
-          : null,
+            ? f.get("game_id")
+            : null,
 
         game_server:
           isML
-          ? f.get("server")
-          : null,
+            ? f.get("server")
+            : null,
 
         logo_request_name:
           isLogo
-          ? f.get("logo_name")
-          : null,
+            ? f.get("logo_name")
+            : null,
 
         logo_description:
           isLogo
-          ? f.get("logo_description")
-          : null
+            ? f.get("logo_description")
+            : null
+
       };
 
-      const {error:orderError}=
+      /* -----------------------------------------
+         INSERT ORDER
+         IMPORTANT:
+         Tidak menggunakan .select().single()
+         ----------------------------------------- */
+
+      const result =
         await window.supabaseClient
           .from("orders")
           .insert(orderPayload);
 
-      if(orderError){
+      if(result.error){
 
-        /* Hapus file jika pembuatan order gagal */
-        if(proofPath){
-          await window.supabaseClient
-            .storage
-            .from("payment-proofs")
-            .remove([proofPath]);
-        }
+        /* hapus bukti jika order gagal */
+
+        await window.supabaseClient
+          .storage
+          .from("payment-proofs")
+          .remove([proofPath]);
 
         if(referencePath){
+
           await window.supabaseClient
             .storage
             .from("logo-references")
             .remove([referencePath]);
+
         }
 
-        throw orderError;
-      }
-
-      /* Order berhasil */
-      if(isLogo){
-        await idbDelete(
-          "logoReference"
+        throw new Error(
+          result.error.message
         );
       }
 
-      localStorage.removeItem(
-        "ko_cart"
-      );
+      /* -----------------------------------------
+         BERHASIL
+         ----------------------------------------- */
 
-      /*
-       * Tidak memakai data.id karena
-       * INSERT tidak melakukan SELECT.
-       */
+      await idbDelete("logoReference");
+
       localStorage.setItem(
         "ko_last_order_id",
         code
       );
 
-      location.href="orders.html";
+      clearCart();
+
+      status.innerHTML = `
+        <p>
+          Pesanan berhasil dibuat.
+          Mengalihkan...
+        </p>
+      `;
+
+      setTimeout(()=>{
+        location.href = "orders.html";
+      },700);
 
     }catch(err){
 
@@ -944,140 +884,178 @@ async function checkout(){
         err
       );
 
-      alert(
-        "Pesanan gagal: "+
-        (err?.message || String(err))
-      );
+      status.innerHTML = `
+        <p style="color:red">
+          Pesanan gagal: ${esc(err.message)}
+        </p>
+      `;
 
-      btn.disabled=false;
+      submit.disabled = false;
 
-      btn.textContent=
-        "Bayar & Buat Pesanan →";
     }
-  };
+
+  });
+
 }
 
-
-/* =========================
-   RIWAYAT PESANAN
-========================= */
+/* =========================================================
+   ORDERS
+   ========================================================= */
 
 async function orders(){
-  const box=$("#orders");
 
-  if(!box)return;
+  const target =
+    $("#orders") ||
+    $("#orderList");
+
+  if(!target) return;
 
   if(!window.supabaseClient){
-    box.innerHTML=`
-      <div class="empty">
-        Supabase belum terhubung.
-      </div>
-    `;
+
+    target.innerHTML =
+      `<div class="empty">Supabase belum terhubung.</div>`;
 
     return;
   }
 
-  const {
-    data,
-    error
-  }=
-    await window.supabaseClient
-      .from("orders")
-      .select("*")
-      .order(
-        "created_at",
-        {ascending:false}
-      )
-      .limit(50);
+  target.innerHTML =
+    `<div class="empty">Memuat pesanan...</div>`;
 
-  if(error){
-    box.innerHTML=`
-      <div class="empty">
-        ${esc(error.message)}
-      </div>
-    `;
+  try{
 
-    return;
-  }
+    const result =
+      await window.supabaseClient
+        .from("orders")
+        .select("*")
+        .order(
+          "created_at",
+          {ascending:false}
+        )
+        .limit(50);
 
-  if(!data?.length){
-    box.innerHTML=`
-      <div class="empty">
-        Belum ada riwayat transaksi.
-      </div>
-    `;
+    if(result.error){
 
-    return;
-  }
+      target.innerHTML = `
+        <div class="empty">
+          Gagal memuat pesanan.
+          <br>
+          ${esc(result.error.message)}
+        </div>
+      `;
 
-  box.innerHTML=data.map(o=>`
-    <article class="order-card">
+      return;
+    }
 
-      <div class="row">
+    const data =
+      result.data || [];
 
-        <div>
-          <b>
-            ${esc(o.product_name)}
-          </b>
+    if(!data.length){
 
-          <div class="muted">
-            ${esc(o.order_code||o.id)}
-            •
-            ${o.created_at
-              ? new Date(o.created_at)
-                  .toLocaleString("id-ID")
-              : "-"
-            }
+      target.innerHTML =
+        `<div class="empty">Belum ada pesanan.</div>`;
+
+      return;
+    }
+
+    target.innerHTML =
+      data.map(order=>`
+
+        <div class="order-card">
+
+          <div>
+            <strong>
+              ${esc(order.product_name || "Pesanan")}
+            </strong>
+
+            <div>
+              ${esc(order.order_code || "")}
+            </div>
           </div>
+
+          <div>
+            ${money(order.amount)}
+          </div>
+
+          <div>
+            Status:
+            <strong>
+              ${esc(
+                order.status ||
+                "Menunggu Verifikasi"
+              )}
+            </strong>
+          </div>
+
+          ${
+            order.proof_path
+            ? `
+              <div>
+                Bukti transfer:
+                <span>Terupload</span>
+              </div>
+            `
+            : ""
+          }
+
         </div>
 
-        <span class="badge">
-          ${esc(o.status)}
-        </span>
+      `).join("");
 
+  }catch(err){
+
+    console.error(
+      "ORDERS ERROR:",
+      err
+    );
+
+    target.innerHTML = `
+      <div class="empty">
+        ${esc(err.message)}
       </div>
+    `;
 
-      <hr style="border-color:#17344f">
-
-      <div class="order-row">
-        <span>Total</span>
-
-        <b class="price">
-          ${money(o.amount)}
-        </b>
-      </div>
-
-      <div
-        class="muted"
-        style="margin-top:8px"
-      >
-        ${esc(o.detail||"")}
-      </div>
-
-    </article>
-  `).join("");
+  }
 }
 
-document.addEventListener("DOMContentLoaded",()=>{
-  bindGlobal();
-  renderHome();
-  logoGallery();
 
-  const p=document.body.dataset.page;
+/* =========================================================
+   INIT
+   ========================================================= */
 
-  if(
-    p==="game" ||
-    p==="virtual" ||
-    p==="logo"
-  ){
-    productPage(p);
+document.addEventListener(
+  "DOMContentLoaded",
+  ()=>{
+
+    bindGlobal();
+
+    renderHome();
+
+    logoGallery();
+
+    const page =
+      document.body.dataset.page;
+
+    if(
+      page === "game" ||
+      page === "virtual" ||
+      page === "logo"
+    ){
+
+      productPage(page);
+
+    }
+
+    if(page === "checkout"){
+
+      checkout();
+
+    }
+
+    if(page === "orders"){
+
+      orders();
+
+    }
+
   }
-
-  if(p==="checkout"){
-    checkout();
-  }
-
-  if(p==="orders"){
-    orders();
-  }
-});
+);
